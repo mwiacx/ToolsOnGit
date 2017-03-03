@@ -33,13 +33,17 @@ Plugin 'plasticboy/vim-markdown'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/taglist.vim'
 Plugin 'wesleyche/srcexpl'
-Plugin 'brookhong/cscope.vim'
+"Plugin 'Shougo/neosnippet-snippets'
+"Plugin 'Shougo/neosnippet'
+"Plugin 'Shougo/neocomplete'
+"Plugin 'xuhdev/SingleCompile'
+"Plugin 'vim-latex/vim-latex'
 "Plugin 'vim-scripts/armasm'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
-"filetype plugin on
+filetype plugin on
 
 "-----------
 "vim config
@@ -47,8 +51,10 @@ filetype plugin indent on    " required
 	set number "line number
 	set autoindent "auto indent
 	set ts=4 "tab size
+	set shiftwidth=4
 	set cindent
 	let mapleader="," "leader key
+	set list lcs=tab:\|\ 
 
 "-------------------
 "ctags database path
@@ -139,11 +145,136 @@ filetype plugin indent on    " required
 	syntax on
 	"molokai required!
 	set t_Co=256
-	set background=light
-	colorscheme molokai 
-	let g:molokai_original = 1
+	set background=dark
+	colorscheme solarized
+	"colorscheme molokai
+	"let g:molokai_original = 1
 "---------------
 "markdown config
 "---------------
 	let g:vim_markdown_frontmatter=1
 	let g:vim_markdown_math=1
+
+"----------------
+"vim-Latex config
+"----------------
+"	set sw=2
+"	set iskeyword+=:
+"	set shellslash "for win32
+"	set grepprg=grep\ -nH\ $*
+"	nmap <F10> :call Tex_ViewLatex()<CR>
+"	let g:tex_flavor='latex'
+"	let g:Tex_compileRule_pdf = 'xelatex -synctex=1 -file-line-erro-style -interation=nonstopmode $*'
+"	let g:Tex_DefaultTragetFormat = 'pdf'
+"	let g:Tex_SmartKeyBS = 0
+"	let g:Tex_ViewRule_dvi = 'dviout'
+
+"	call SingleCompile#SetCompilerTemplate('tex', 'xelatex', 'XeLatex',
+"	                \ 'xelatex', '-interaction=nonstopmode -synctex=1 -file-line-error-style',
+"	                \ SingleCompile#GetDefaultOpenCommand() .
+"	                \ ' "$(FILE_TITLE)$.pdf"')
+"	" call SingleCompile#SetOutfile('filetype', 'compiler', 'out_file')
+"	call SingleCompile#ChooseCompiler('tex', 'xelatex')
+"	set list lcs=tab:\|\
+
+"-----------------
+"neosnippet config
+"-----------------
+"	" Plugin key-mappings
+"	imap <C-k> <Plug>(neosnippet_expand_or_jump)
+"	smap <C-k> <Plug>(neosnippet_expand_or_jump)
+"	xmap <C-k> <Plug>(neosnippet_expand_target)
+"	" superTab like snippets behavior
+"	imap <C-k> <Plug>(neosnippet_expand_or_jump)
+"	smap <expr><TAB> neosinppet#expandable_or_jumpable() ?
+"				\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+"	if has('conceal')
+"		set conceallevel=2 concealcursor=niv
+"	endif
+
+"	" Enable sinpMate compatibility feature
+"	let g:neosnippet#enable_sinpmate_compatibility = 1
+"	
+"	let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippet/snippets'
+
+
+
+"	"Note: This option must be set in .vimrc(_vimrc).  NOT IN
+"	".gvimrc(_gvimrc)!
+"	" Disable AutoComplPop.
+"	let g:acp_enableAtStartup = 0
+"	" Use neocomplete.
+"	let g:neocomplete#enable_at_startup = 1
+"	" Use smartcase.
+"	let g:neocomplete#enable_smart_case = 1
+"	" Set minimum syntax keyword length.
+"	let g:neocomplete#sources#syntax#min_keyword_length = 3
+"	"
+"	" Define dictionary.
+"	let g:neocomplete#sources#dictionary#dictionaries = {
+"	    \ 'default' : '',
+"	    \ 'vimshell' : $HOME.'/.vimshell_hist',
+"	    \ 'scheme' : $HOME.'/.gosh_completions'
+"	    \ }
+"
+"	" Define keyword.
+"	if !exists('g:neocomplete#keyword_patterns')
+"	    let g:neocomplete#keyword_patterns = {}
+"	endif
+"	let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+"
+"	" Plugin key-mappings.
+"	inoremap <expr><C-g> neocomplete#undo_completion()
+"	inoremap <expr><C-l> neocomplete#complete_common_string()
+"
+"	" Recommended key-mappings.
+"	" <CR>: close popup and save indent.
+"	inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+"	function! s:my_cr_function()
+"		return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+"	" For no inserting <CR> key.
+"	" return pumvisible() ? "\<C-y>" : "\<CR>"
+"	endfunction
+"	" <TAB>: completion.
+"	inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+"	" <C-h>, <BS>: close popup and delete backword char.
+"	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+"	inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+"	" Close popup by <Space>.
+"	"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+"
+"	" AutoComplPop like behavior.
+"	"let g:neocomplete#enable_auto_select = 1
+"
+"	" Shell like behavior(not recommended).
+"	"set completeopt+=longest
+"	"let g:neocomplete#enable_auto_select = 1
+"	"let g:neocomplete#disable_auto_complete = 1
+"	"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+"
+"	" Enable omni completion.
+"	autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+"	autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+"	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+"	autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+"	autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+"
+"	" Enable heavy omni completion.
+"	if !exists('g:neocomplete#sources#omni#input_patterns')
+"		let g:neocomplete#sources#omni#input_patterns = {}
+"	endif
+"	"let g:neocomplete#sources#omni#input_patterns.php = '[^.\t]->\h\w*\|\h\w*::'
+"	"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:]*\t]\%(\.\|->\)'
+"	"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:]*\t]\%(\.\|->\)\|\h\w*::'
+"
+"	" For perlomni.vim setting.
+"	" https://github.com/c9s/perlomni.vim
+"	let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"
+"
+""----------------------
+""SingleCompile
+""----------------------
+"	let g:SingleCompile_showquickfixiferror = 1
+"	nmap <F6> :SCCompile<cr>
+"	imap <F6> :SCCompile<cr>
