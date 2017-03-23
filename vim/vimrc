@@ -32,7 +32,8 @@ Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/taglist.vim'
-Plugin 'wesleyche/srcexpl'
+Plugin 'Valloric/YouCompleteMe'
+"Plugin 'wesleyche/srcexpl'
 "Plugin 'Shougo/neosnippet-snippets'
 "Plugin 'Shougo/neosnippet'
 "Plugin 'Shougo/neocomplete'
@@ -56,13 +57,36 @@ filetype plugin on
 	let mapleader="," "leader key
 	set list lcs=tab:\|\ 
 
+"-----------
+"YCM config
+"-----------
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_enable_diagnostic_signs = 1 
+let g:ycm_enable_diagnostic_highlighting = 1 
+let g:ycm_collect_identifiers_from_tags_files = 1           " 开启 YCM 基于标签引擎
+let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释与字符串中的内容也用于补全
+let g:syntastic_ignore_files=[".*\.py$"]
+let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
+let g:ycm_complete_in_comments = 1
+let g:ycm_confirm_extra_conf = 0
+"let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']  " 映射按键, 没有这个会拦截掉tab, 导致其他插件的tab不能用.
+"let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+let g:ycm_complete_in_comments = 1                          " 在注释输入中也能补全
+let g:ycm_complete_in_strings = 1                           " 在字符串输入中也能补全
+let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释和字符串中的文字也会被收入补全
+"let g:ycm_show_diagnostics_ui = 0                           " 禁用语法检查
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>" |            " 回车即选中当前项
+nnoremap <leader>jj :YcmCompleter GoToDefinitionElseDeclaration<CR>|     " 跳转到定义处
+let g:ycm_min_num_of_chars_for_completion=2                 "
+"从第2个键入字符就开始罗列匹配项
 "-------------------
 "ctags database path
 "-------------------
 	"请勿使用新版的Ctags，其生成的tags有问题(2016/10/10)
 	"推荐Ctags-5.8，自行下载编译
 	"set tags=/home/barrelfish4jetsontk1/tags
-	set tags=/home/barrelfish/tags
+	"set tags=/home/barrelfish/tags
 
 "--------------------
 "cscope database path
@@ -72,11 +96,11 @@ filetype plugin on
 	set cst "cscope DB tag DB search
 	set nocsverb "verbose off
 
-	cs add /home/cx/barrelfish/cscope.out
+	"cs add /home/cx/mCode/barrelfish/cscope.out /home/cx/mCode/barrelfish
 	set csverb
 	
 "-------------------
-"cscope key map
+"key map
 "-------------------
 	" s: FInd this C symbol
 	nnoremap <leader>fs :cs find s <C-R>=expand('<cword>')<CR><CR>
@@ -94,13 +118,23 @@ filetype plugin on
 	nnoremap <leader>ff :cs find f <C-R>=expand('<cword>')<CR><CR>
 	" i: Find files #including this file
 	nnoremap <leader>fi :cs find i <C-R>=expand('<cword>')<CR><CR>
+	" ctrl-] : goto def
+	nmap <leader>g <C-]>
+	nmap <leader>t <C-t>
+	" h, j, k, l
+	nmap <C-H> <C-W>h
+	nmap <C-J> <C-W>j
+	nmap <C-K> <C-W>k
+	nmap <C-L> <C-W>l
+	" update tags and cscope.out
+	nnoremap <F10> :!ctags --sort=foldcase -R . && cscope -Rbq<CR>
 
 "--------------------
 "Tap list config
 "--------------------
 	"filetype on "vim filetype on
 	"F7 key = Tag List Toggling
-	nmap <F9> :TlistToggle <CR> 
+	nmap <F8> :TlistToggle <CR> 
 	"nmap <F10> : !ctags -R <CR>
 	let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
 	let Tlist_Inc_Winwidth = 0
@@ -112,26 +146,21 @@ filetype plugin on
 "----------------------
 "Source Explorer config
 "----------------------
-	nmap <F8> :SrcExplToggle <CR>
-	nmap <C-H> <C-W>h
-	nmap <C-J> <C-W>j
-	nmap <C-K> <C-W>k
-	nmap <C-L> <C-W>l
-
-	let g:SrcExpl_winHeight = 8
-	let g:SrcExpl_refreshTime = 100
-	let g:SrcExpl_jumpKey = "<ENTER>"
-	let g:SrcExpl_gobackKey = "<SPACE>"
-	let g:SrcExpl_isUpdateTags = 0
-	let g:SrcExpl_pluginList = [
-		\ "__Tag_List__",
-	    \ "_NERD_tree_",
-	    \ "Source_Explorer"
-	\]
-
-	let g:SrcExpl_searchLocalDef = 1
-	let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R ."
-	let g:SrcExpl_updateTagsKey = "<F12>"
+"	nmap <F8> :SrcExplToggle <CR>
+"	let g:SrcExpl_winHeight = 8
+"	let g:SrcExpl_refreshTime = 100
+"	let g:SrcExpl_jumpKey = "<ENTER>"
+"	let g:SrcExpl_gobackKey = "<SPACE>"
+"	let g:SrcExpl_isUpdateTags = 0
+"	let g:SrcExpl_pluginList = [
+"		\ "__Tag_List__",
+"	    \ "_NERD_tree_",
+"	    \ "Source_Explorer"
+"	\]
+"
+"	let g:SrcExpl_searchLocalDef = 1
+"	let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R . && cscope -Rbq ."
+"	let g:SrcExpl_updateTagsKey = "<F12>"
 
 "------------------------
 "NERD Tree config
@@ -146,135 +175,15 @@ filetype plugin on
 	"molokai required!
 	set t_Co=256
 	set background=dark
-	colorscheme solarized
-	"colorscheme molokai
-	"let g:molokai_original = 1
+	"colorscheme solarized
+	"let g:solarized_termtrans = 1
+	colorscheme molokai
+	let g:molokai_original = 1
+	let g:molokai_termtrans = 1
+	hi Normal ctermfg=252 ctermbg=none
+	
 "---------------
 "markdown config
 "---------------
 	let g:vim_markdown_frontmatter=1
 	let g:vim_markdown_math=1
-
-"----------------
-"vim-Latex config
-"----------------
-"	set sw=2
-"	set iskeyword+=:
-"	set shellslash "for win32
-"	set grepprg=grep\ -nH\ $*
-"	nmap <F10> :call Tex_ViewLatex()<CR>
-"	let g:tex_flavor='latex'
-"	let g:Tex_compileRule_pdf = 'xelatex -synctex=1 -file-line-erro-style -interation=nonstopmode $*'
-"	let g:Tex_DefaultTragetFormat = 'pdf'
-"	let g:Tex_SmartKeyBS = 0
-"	let g:Tex_ViewRule_dvi = 'dviout'
-
-"	call SingleCompile#SetCompilerTemplate('tex', 'xelatex', 'XeLatex',
-"	                \ 'xelatex', '-interaction=nonstopmode -synctex=1 -file-line-error-style',
-"	                \ SingleCompile#GetDefaultOpenCommand() .
-"	                \ ' "$(FILE_TITLE)$.pdf"')
-"	" call SingleCompile#SetOutfile('filetype', 'compiler', 'out_file')
-"	call SingleCompile#ChooseCompiler('tex', 'xelatex')
-"	set list lcs=tab:\|\
-
-"-----------------
-"neosnippet config
-"-----------------
-"	" Plugin key-mappings
-"	imap <C-k> <Plug>(neosnippet_expand_or_jump)
-"	smap <C-k> <Plug>(neosnippet_expand_or_jump)
-"	xmap <C-k> <Plug>(neosnippet_expand_target)
-"	" superTab like snippets behavior
-"	imap <C-k> <Plug>(neosnippet_expand_or_jump)
-"	smap <expr><TAB> neosinppet#expandable_or_jumpable() ?
-"				\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-"	if has('conceal')
-"		set conceallevel=2 concealcursor=niv
-"	endif
-
-"	" Enable sinpMate compatibility feature
-"	let g:neosnippet#enable_sinpmate_compatibility = 1
-"	
-"	let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippet/snippets'
-
-
-
-"	"Note: This option must be set in .vimrc(_vimrc).  NOT IN
-"	".gvimrc(_gvimrc)!
-"	" Disable AutoComplPop.
-"	let g:acp_enableAtStartup = 0
-"	" Use neocomplete.
-"	let g:neocomplete#enable_at_startup = 1
-"	" Use smartcase.
-"	let g:neocomplete#enable_smart_case = 1
-"	" Set minimum syntax keyword length.
-"	let g:neocomplete#sources#syntax#min_keyword_length = 3
-"	"
-"	" Define dictionary.
-"	let g:neocomplete#sources#dictionary#dictionaries = {
-"	    \ 'default' : '',
-"	    \ 'vimshell' : $HOME.'/.vimshell_hist',
-"	    \ 'scheme' : $HOME.'/.gosh_completions'
-"	    \ }
-"
-"	" Define keyword.
-"	if !exists('g:neocomplete#keyword_patterns')
-"	    let g:neocomplete#keyword_patterns = {}
-"	endif
-"	let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-"
-"	" Plugin key-mappings.
-"	inoremap <expr><C-g> neocomplete#undo_completion()
-"	inoremap <expr><C-l> neocomplete#complete_common_string()
-"
-"	" Recommended key-mappings.
-"	" <CR>: close popup and save indent.
-"	inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"	function! s:my_cr_function()
-"		return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-"	" For no inserting <CR> key.
-"	" return pumvisible() ? "\<C-y>" : "\<CR>"
-"	endfunction
-"	" <TAB>: completion.
-"	inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-"	" <C-h>, <BS>: close popup and delete backword char.
-"	inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-"	inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-"	" Close popup by <Space>.
-"	"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-"
-"	" AutoComplPop like behavior.
-"	"let g:neocomplete#enable_auto_select = 1
-"
-"	" Shell like behavior(not recommended).
-"	"set completeopt+=longest
-"	"let g:neocomplete#enable_auto_select = 1
-"	"let g:neocomplete#disable_auto_complete = 1
-"	"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-"
-"	" Enable omni completion.
-"	autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-"	autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-"	autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"	autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-"	autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-"
-"	" Enable heavy omni completion.
-"	if !exists('g:neocomplete#sources#omni#input_patterns')
-"		let g:neocomplete#sources#omni#input_patterns = {}
-"	endif
-"	"let g:neocomplete#sources#omni#input_patterns.php = '[^.\t]->\h\w*\|\h\w*::'
-"	"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:]*\t]\%(\.\|->\)'
-"	"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:]*\t]\%(\.\|->\)\|\h\w*::'
-"
-"	" For perlomni.vim setting.
-"	" https://github.com/c9s/perlomni.vim
-"	let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-"
-"
-""----------------------
-""SingleCompile
-""----------------------
-"	let g:SingleCompile_showquickfixiferror = 1
-"	nmap <F6> :SCCompile<cr>
-"	imap <F6> :SCCompile<cr>
