@@ -96,7 +96,7 @@ let g:ycm_min_num_of_chars_for_completion=2                 "
 	set cst "cscope DB tag DB search
 	set nocsverb "verbose off
 
-	"cs add /home/cx/mCode/barrelfish/cscope.out /home/cx/mCode/barrelfish
+	cs add /home/cx/mCode/barrelfish/cscope.out /home/cx/mCode/barrelfish
 	set csverb
 	
 "-------------------
@@ -127,7 +127,7 @@ let g:ycm_min_num_of_chars_for_completion=2                 "
 	nmap <C-K> <C-W>k
 	nmap <C-L> <C-W>l
 	" update tags and cscope.out
-	nnoremap <F10> :!ctags --sort=foldcase -R . && cscope -Rbq<CR>
+	nnoremap <F6> :!ctags --sort=foldcase -R . && cscope -Rbq<CR>
 
 "--------------------
 "Tap list config
