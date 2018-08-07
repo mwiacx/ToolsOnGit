@@ -30,28 +30,32 @@ Plugin 'L9'
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
 " Plugin 'ascenator/L9', {'name': 'newL9'}
-Plugin 'tomasr/molokai'
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/taglist.vim'
 "Plugin 'Rip-Rip/clang_complete'
 Plugin 'ctrlpvim/ctrlp.vim'
-"Plugin 'powerline/powerline'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-"Plugin 'powerline/powerline'
 "Plugin 'davidhalter/jedi-vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'Valloric/YouCompleteMe'
-"Plugin 'wesleyche/srcexpl'
-"Plugin 'Shougo/neosnippet-snippets'
-"Plugin 'Shougo/neosnippet'
-"Plugin 'Shougo/neocomplete'
+Plugin 'wesleyche/srcexpl'
 "Plugin 'xuhdev/SingleCompile'
 "Plugin 'vim-latex/vim-latex'
 "Plugin 'vim-scripts/armasm'
+
+"Language Highlight
+Plugin 'raichoo/haskell-vim'
+
+"Themes
+Plugin 'tomasr/molokai'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'morhetz/gruvbox'
+Plugin 'arcticicestudio/nord-vim'
+Plugin 'NLKNguyen/papercolor-theme'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -61,13 +65,17 @@ filetype plugin on
 "-----------
 "vim 基本配置
 "-----------
+    set t_Co=256
     set number "显示行号
+    set laststatus=2
     set shortmess=atl
     set ts=4 "tab宽度为4
     set expandtab "将Tab转换为空格
     set shiftwidth=4 "缩进宽度为4
     set cindent "C语言自动缩进
     set hlsearch "搜索字高亮
+    set cursorline "高亮本行
+    set cursorcolumn "高亮本列
     let mapleader="," "leader key
     set list lcs=tab:\|\ ,trail:-,extends:>,precedes:<
 
@@ -82,24 +90,24 @@ filetype plugin on
 "-----------
 "YCM config
 "-----------
-let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-let g:ycm_enable_diagnostic_signs = 1
-let g:ycm_enable_diagnostic_highlighting = 1
-let g:ycm_collect_identifiers_from_tags_files = 1           " 开启 YCM 基于标签引擎
-let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释与字符串中的内容也用于补全
-"let g:syntastic_ignore_files=[".*\.py$"]
-let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
-let g:ycm_complete_in_comments = 1
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']  " 映射按键, 没有这个会拦截掉tab, 导致其他插件的tab不能用.
-let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-let g:ycm_complete_in_comments = 1                          " 在注释输入中也能补全
-let g:ycm_complete_in_strings = 1                           " 在字符串输入中也能补全
-let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释和字符串中的文字也会被收入补全
-let g:ycm_show_diagnostics_ui = 0                           " 禁用语法检查
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-nnoremap <leader>jj :YcmCompleter GoToDefinitionElseDeclaration<CR>
-let g:ycm_min_num_of_chars_for_completion=2
+    let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+    let g:ycm_enable_diagnostic_signs = 1
+    let g:ycm_enable_diagnostic_highlighting = 1
+    let g:ycm_collect_identifiers_from_tags_files = 1           " 开启 YCM 基于标签引擎
+    let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释与字符串中的内容也用于补全
+    "let g:syntastic_ignore_files=[".*\.py$"]
+    let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
+    let g:ycm_complete_in_comments = 1
+    let g:ycm_confirm_extra_conf = 0
+    let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']  " 映射按键, 没有这个会拦截掉tab, 导致其他插件的tab不能用.
+    let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+    let g:ycm_complete_in_comments = 1                          " 在注释输入中也能补全
+    let g:ycm_complete_in_strings = 1                           " 在字符串输入中也能补全
+    let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释和字符串中的文字也会被收入补全
+    let g:ycm_show_diagnostics_ui = 0                           " 禁用语法检查
+    autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+    nnoremap <leader>jj :YcmCompleter GoToDefinitionElseDeclaration<CR>
+    let g:ycm_min_num_of_chars_for_completion = 2
 "从第2个键入字符就开始罗列匹配项
 "-------------------
 "ctags database path
@@ -114,15 +122,25 @@ let g:ycm_min_num_of_chars_for_completion=2
 "--------------------
 "cscope database path
 "--------------------
-    set csprg=/usr/bin/cscope "cscope位置
-    set csto=0 "cscope DB search fisrt
-    set cst "cscope DB tag DB search
-    set nocsverb "verbose off
 
-    cs add /home/cx/mCode/barrelfish/cscope.out /home/cx/mCode/barrelfish
-"   cs add /home/cx/Study/barrelfish/cscope.out /home/cx/Study/barrelfish
-"   cs add /home/cx/Study/CommentBarrelfish/cscope.out /home/cx/Study/CommentBarrelfish
+if has("cscope")
+    set csprg=/usr/bin/cscope
+    set csto=0
+    set cst
     set csverb
+    set cspc=3
+    "add any database in current dir
+    if filereadable("cscope.out")
+        cs add cscope.out
+    "else search cscope.out elsewhere
+    "else
+    "   let cscope_file=findfile("cscope.out", ".;")
+    "   let cscope_pre=matchstr(cscope_file, ".*/")
+    "   if !empty(cscope_file) && filereadable(cscope_file)
+    "       exe "cs add" cscope_file cscope_pre
+    "   endif
+     endif
+endif
 
 "-------------------
 "ctrlp setup
@@ -158,23 +176,11 @@ let g:ycm_min_num_of_chars_for_completion=2
     nmap <C-K> <C-W>k
     nmap <C-L> <C-W>l
     " update tags and cscope.out
-    nnoremap <F6> :!ctags --sort=foldcase -R . && cscope -Rbq<CR>
+    nnoremap <F6> :!ctags --sort=foldcase -R . && find . -name '*.c' -name '*.h' -name '*.cpp' > cscope.files && cscope -b cscope.files<CR>
     " ()....
     " setup auto-pairs
     let g:AutoPairsFlyMode = 0
     let g:AutoPairsShortcutBackInsert = '<M-b>'
-
-"--------------------
-"airline config
-"--------------------
-    "open tabline extension
-    let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#left_sep = ' '
-    let g:airline#extensions#tabline#left_alt_sep = '|'
-    let g:airline#extensions#tabline#formatter = 'default'
-    "
-    let g:airline_powerline_fonts = 0
-    "
 
 "--------------------
 "Tap list config
@@ -183,7 +189,7 @@ let g:ycm_min_num_of_chars_for_completion=2
     "F7 key = Tag List Toggling
     nmap <F9> :TlistToggle <CR>
     "nmap <F10> : !ctags -R <CR>
-    let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
+    let Tlist_Ctags_Cmd = "/usr/bin/ctags"
     let Tlist_Inc_Winwidth = 0
     let Tlist_Show_One_File = 1
     let Tlist_Exit_OnlyWindow = 1
@@ -222,20 +228,67 @@ let g:ycm_min_num_of_chars_for_completion=2
 "----------
     syntax enable
     "molokai required!
-    set t_Co=256
-    set background=light
-    "airline themes
-    let g:airline_theme='solarized'
-    colorscheme solarized
+    set background=dark
+    " solarized
     let g:solarized_termtrans = 1
     let g:solarized_termcolors = 256
-    "colorscheme molokai
-    "let g:molokai_original = 1
-    "let g:molokai_termtrans = 1
-    "hi Normal ctermfg=252 ctermbg=none
+    " molokai
+    let g:molokai_original = 1
+    let g:molokai_termtrans = 1
+    " gruvbox
+    let g:gruvbox_italic = 1
+    " papercolor
+    let g:PaperColor_Theme_Options = {
+        \   'language': {
+        \     'python': {
+        \       'highlight_builtins' : 1
+        \     },
+        \     'cpp': {
+        \       'highlight_standard_library': 1
+        \     },
+        \     'c': {
+        \       'highlight_builtins' : 1
+        \     }
+        \   }
+        \ }
+    " nord
+    let g:nord_italic = 1
+    let g:nord_underline = 1
+    let g:nord_italic_comments = 1
+    let g:nord_comment_brightness = 20
+    let g:nord_uniform_diff_background = 1
+    let g:nord_cursor_line_number_background = 1
+
+    colorscheme PaperColor
+
+"--------------------
+"airline config
+"--------------------
+    "open tabline extension
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#show_close_button = 0
+    let g:airline#extensions#tabline#buffer_nr_show = 1
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+    let g:airline#extensions#tabline#formatter = 'default'
+    " Use Powerline Fonts
+    let g:airline_powerline_fonts = 1
+    " Setup airline theme
+    let g:airline_theme='papercolor'
 
 "---------------
 "markdown config
 "---------------
     let g:vim_markdown_frontmatter=1
     let g:vim_markdown_math=1
+
+"---------------
+" Haskell-vim
+"---------------
+    let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
+    let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
+    let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
+    let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
+    let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
+    let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
+    let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
