@@ -34,15 +34,19 @@ Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/taglist.vim'
-"Plugin 'Rip-Rip/clang_complete'
 Plugin 'ctrlpvim/ctrlp.vim'
-"Plugin 'davidhalter/jedi-vim'
 Plugin 'jiangmiao/auto-pairs'
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'wesleyche/srcexpl'
+Plugin 'tpope/vim-sleuth'
+" 后台递归搜索当前光标所在的token
+Plugin 'ramele/agrep'
+Plugin 'airblade/vim-gitgutter'
 "Plugin 'xuhdev/SingleCompile'
 "Plugin 'vim-latex/vim-latex'
 "Plugin 'vim-scripts/armasm'
+"Plugin 'Rip-Rip/clang_complete'
+"Plugin 'davidhalter/jedi-vim'
+Plugin 'Valloric/YouCompleteMe'
 
 "Language Highlight
 Plugin 'raichoo/haskell-vim'
@@ -78,37 +82,43 @@ filetype plugin on
     set cursorcolumn "高亮本列
     let mapleader="," "leader key
     set list lcs=tab:\|\ ,trail:-,extends:>,precedes:<
+    set backspace=2
+
+"---------------------
+" YCM config
+"---------------------
+"
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-a>'
+set completeopt=menu,menuone
+
+let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+			\ 'cs,lua,javascript': ['re!\w{2}'],
+			\ }
+let g:ycm_filetype_whitelist = {
+			\ "c":1,
+			\ "cpp":1,
+			\ "objc":1,
+                        \ "python":1,
+			\ "sh":1,
+			\ "zsh":1,
+			\ "zimbu":1,
+			\ }
 
 "---------------------
 "clang_complete config
 "---------------------
-" path to directory where library can be found
-    let g:clang_library_path='/usr/lib/llvm-3.8/lib'
-" or path directly to the library file
-" let g:clang_library_path='/usr/lib64/libclang.so.3.8'
+"path to directory where library can be found
+"    let g:clang_library_path='/usr/lib/llvm-3.8/lib'
+"or path directly to the library file
+"    let g:clang_library_path='/usr/lib64/libclang.so.3.8'
 
-"-----------
-"YCM config
-"-----------
-    let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
-    let g:ycm_enable_diagnostic_signs = 1
-    let g:ycm_enable_diagnostic_highlighting = 1
-    let g:ycm_collect_identifiers_from_tags_files = 1           " 开启 YCM 基于标签引擎
-    let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释与字符串中的内容也用于补全
-    "let g:syntastic_ignore_files=[".*\.py$"]
-    let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
-    let g:ycm_complete_in_comments = 1
-    let g:ycm_confirm_extra_conf = 0
-    let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']  " 映射按键, 没有这个会拦截掉tab, 导致其他插件的tab不能用.
-    let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-    let g:ycm_complete_in_comments = 1                          " 在注释输入中也能补全
-    let g:ycm_complete_in_strings = 1                           " 在字符串输入中也能补全
-    let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释和字符串中的文字也会被收入补全
-    let g:ycm_show_diagnostics_ui = 0                           " 禁用语法检查
-    autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-    nnoremap <leader>jj :YcmCompleter GoToDefinitionElseDeclaration<CR>
-    let g:ycm_min_num_of_chars_for_completion = 2
-"从第2个键入字符就开始罗列匹配项
 "-------------------
 "ctags database path
 "-------------------
@@ -117,13 +127,12 @@ filetype plugin on
     "set tags=/home/barrelfish4jetsontk1/tags
     "set tags=/home/cx/mCode/barrelfish/tags
     set tags=tags;
-    set autochdir
 
 "--------------------
 "cscope database path
 "--------------------
 if has("cscope")
-    set csprg=/usr/bin/cscope
+    set csprg=/usr/local/bin/cscope
     set csto=0
     set cst
     set nocsverb
@@ -175,7 +184,7 @@ endif
     nmap <C-K> <C-W>k
     nmap <C-L> <C-W>l
     " update tags and cscope.out
-    nnoremap <F6> :!ctags --sort=foldcase -R . && find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files && cscope -bqk && rm cscope.files<CR>
+    nnoremap <F6> :!ctags -R . && find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files && cscope -bqk && rm cscope.files<CR>
     " ()....
     " setup auto-pairs
     let g:AutoPairsFlyMode = 0
@@ -188,7 +197,7 @@ endif
     "F7 key = Tag List Toggling
     nmap <F9> :TlistToggle <CR>
     "nmap <F10> : !ctags -R <CR>
-    let Tlist_Ctags_Cmd = "/usr/bin/ctags"
+    let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"
     let Tlist_Inc_Winwidth = 0
     let Tlist_Show_One_File = 1
     let Tlist_Exit_OnlyWindow = 1
@@ -220,6 +229,7 @@ endif
 "NERD Tree config
 "------------------------
     let NERDTreeWinPos = "left"
+    "let g:NERDTreeNodeDelimiter = "\u00a0"
     nmap <F8> :NERDTreeToggle<CR>
 
 "----------
@@ -258,7 +268,8 @@ endif
     let g:nord_uniform_diff_background = 1
     let g:nord_cursor_line_number_background = 1
 
-    colorscheme PaperColor
+    "colorscheme Tomorrow-Night-Eighties
+    colorscheme molokai
 
 "--------------------
 "airline config
@@ -273,13 +284,19 @@ endif
     " Use Powerline Fonts
     let g:airline_powerline_fonts = 1
     " Setup airline theme
-    let g:airline_theme='papercolor'
+    let g:airline_theme='molokai'
 
 "---------------
 "markdown config
 "---------------
     let g:vim_markdown_frontmatter=1
     let g:vim_markdown_math=1
+
+"---------------
+"python config
+"---------------
+
+   let python_highlight_all = 1
 
 "---------------
 " Haskell-vim
@@ -291,3 +308,26 @@ endif
     let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
     let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
     let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
+
+"---------------
+" vim-gitgutter
+"---------------
+    nmap <leader>he :GitGutterEnable<CR>
+    nmap <leader>hd :GitGutterDisable<CR>
+    nmap <leader>hk <Plug>GitGutterNextHunk
+    nmap <leader>hj <Plug>GitGutterPrevHunk
+    nmap <leader>hs <Plug>GitGutterStageHunk
+    nmap <leader>hu <Plug>GitGutterUndoHunk
+    nmap <leader>hp <plug>GitGutterPreviewHunk
+    nmap <leader>hf :GitGutterFold<CR>
+
+    let g:gitgutter_enabled = 1
+    let g:gitgutter_signs = 1
+    let g:gitgutter_highlight_lines = 0
+
+"---------------
+" agrep
+"---------------
+    nnoremap <C-m> :Agrep -r "<cword>" ./<CR>
+
+    nnoremap <buffer> <F5> :exec '!python' shellescape(@%, 1)<cr>
